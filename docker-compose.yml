@@ -1,0 +1,43 @@
+services:
+  activation-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: activation-service
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: activation-service-db
+      DATABASE_HOST: activation-service-postgres
+      DATABASE_PORT: 5432
+    depends_on:
+      - activation-service-postgres
+    networks:
+      - tweet-network
+
+  activation-service-postgres:
+    image: postgres:17.2
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    volumes:
+      - activation-service-volume:/var/lib/postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: activation-service-db
+    networks:
+      - tweet-network
+
+volumes:
+  activation-service-volume:
+    name: activation-service-volume
+
+networks:
+  tweet-network:
+    external: false
+    name: tweet-network
