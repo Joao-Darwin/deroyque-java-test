@@ -61,5 +61,45 @@ public class ActivationRegistry {
     @Version
     private Long version;
 
-    protected ActivationRegistry() {}
+    public ActivationRegistry() {}
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public RegistryStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }
