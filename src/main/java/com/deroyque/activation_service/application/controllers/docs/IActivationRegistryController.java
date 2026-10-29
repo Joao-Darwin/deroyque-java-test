@@ -3,16 +3,22 @@ package com.deroyque.activation_service.application.controllers.docs;
 import com.deroyque.activation_service.application.usecases.create.CreateActivationRequestDTO;
 import com.deroyque.activation_service.application.usecases.create.CreateActivationResponseDTO;
 import com.deroyque.activation_service.application.usecases.retrive.byid.GetActivationByIdResponseDTO;
+import com.deroyque.activation_service.application.usecases.retrive.paged.PagedActivationResponseDTO;
+import com.deroyque.activation_service.models.enums.RegistryStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -125,5 +131,59 @@ public interface IActivationRegistryController {
                     required = true
             )
             @PathVariable UUID id
+    );
+
+    @Operation(
+            summary = "Retrieve activation requests",
+            description = """
+                Retrieves activation requests using pagination and optional filters.
+                Results can be filtered by activation status and customer ID.
+                """
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Activation requests successfully retrieved",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = PagedActivationResponseDTO.class
+                    )
+            )
+    )
+    @ApiResponse(
+            responseCode = "400",
+            description = "Invalid pagination parameters or filter values",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProblemDetail.class)
+            )
+    )
+    @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected internal server error",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProblemDetail.class)
+            )
+    )
+    ResponseEntity<Page<PagedActivationResponseDTO>> findAll(
+
+            @ParameterObject
+            Pageable pageable,
+
+            @Parameter(
+                    description = "Filter activation requests by status",
+                    example = "PENDING",
+                    schema = @Schema(implementation = RegistryStatus.class)
+            )
+            @RequestParam(required = false)
+            RegistryStatus status,
+
+            @Parameter(
+                    description = "Filter activation requests by customer identifier",
+                    example = "customer-123"
+            )
+            @RequestParam(required = false)
+            String customerId
     );
 }
