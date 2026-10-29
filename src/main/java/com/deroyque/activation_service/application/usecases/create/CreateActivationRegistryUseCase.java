@@ -26,7 +26,7 @@ public class CreateActivationRegistryUseCase {
             ActivationRegistry activationRegistry = activationRegistryOptional.get();
 
             if (isSameRequest(activationRegistry, request)) {
-                toResponse(activationRegistry);
+                return toResponse(activationRegistry);
             }
 
             throw new ActivationConflictException(

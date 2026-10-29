@@ -5,6 +5,7 @@ import com.deroyque.activation_service.application.usecases.create.CreateActivat
 import com.deroyque.activation_service.application.usecases.create.CreateActivationResponseDTO;
 import com.deroyque.activation_service.application.usecases.retrive.byid.GetActivationByIdResponseDTO;
 import com.deroyque.activation_service.application.usecases.create.CreateActivationRegistryUseCase;
+import com.deroyque.activation_service.application.usecases.retrive.byid.GetActivationByIdUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,10 +24,12 @@ import java.util.UUID;
 public class ActivationRegistryController implements IActivationRegistryController {
 
     private final CreateActivationRegistryUseCase createActivationRegistryUseCase;
+    private final GetActivationByIdUseCase getActivationByIdUseCase;
 
     @Autowired
-    public ActivationRegistryController(CreateActivationRegistryUseCase createActivationRegistryUseCase) {
+    public ActivationRegistryController(CreateActivationRegistryUseCase createActivationRegistryUseCase, GetActivationByIdUseCase getActivationByIdUseCase) {
         this.createActivationRegistryUseCase = createActivationRegistryUseCase;
+        this.getActivationByIdUseCase = getActivationByIdUseCase;
     }
 
     @Override
@@ -40,6 +43,6 @@ public class ActivationRegistryController implements IActivationRegistryControll
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<GetActivationByIdResponseDTO> findById(@PathVariable UUID id) {
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(getActivationByIdUseCase.findById(id));
     }
 }

@@ -1,6 +1,7 @@
 package com.deroyque.activation_service.exception;
 
 import com.deroyque.activation_service.exception.exceptions.ActivationConflictException;
+import com.deroyque.activation_service.exception.exceptions.ActivationNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
@@ -68,6 +69,27 @@ public class GlobalExceptionHandler {
         ));
 
         problem.setTitle("Conflito na solicitação");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        problem.setProperty(TRACE_ID_PROPERTY, MDC.get(TRACE_ID_PROPERTY));
+
+        return problem;
+    }
+
+    @ExceptionHandler(ActivationNotFoundException.class)
+    public ProblemDetail handleActivationNotFound(
+            ActivationNotFoundException ex,
+            HttpServletRequest request) {
+
+        var problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
+
+        problem.setType(URI.create(
+                "https://api.exemplo.com/problems/activation-notfound"
+        ));
+
+        problem.setTitle("Solicitação de ativação não encontrada");
         problem.setInstance(URI.create(request.getRequestURI()));
         problem.setProperty(TRACE_ID_PROPERTY, MDC.get(TRACE_ID_PROPERTY));
 
