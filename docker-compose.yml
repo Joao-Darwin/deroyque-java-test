@@ -16,7 +16,7 @@ services:
     depends_on:
       - activation-service-postgres
     networks:
-      - tweet-network
+      - activations-service-nerwork
 
   activation-service-postgres:
     image: postgres:17.2
@@ -31,13 +31,13 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: activation-service-db
     networks:
-      - tweet-network
+      - activations-service-nerwork
 
 volumes:
   activation-service-volume:
     name: activation-service-volume
 
 networks:
-  tweet-network:
+  activations-service-nerwork:
     external: false
-    name: tweet-network
+    name: activations-service-nerwork
