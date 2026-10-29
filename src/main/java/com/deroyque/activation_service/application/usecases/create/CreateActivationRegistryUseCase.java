@@ -1,7 +1,5 @@
-package com.deroyque.activation_service.business;
+package com.deroyque.activation_service.application.usecases.create;
 
-import com.deroyque.activation_service.controllers.dtos.request.CreateActivationRequestDTO;
-import com.deroyque.activation_service.controllers.dtos.response.CreateActivationResponseDTO;
 import com.deroyque.activation_service.exception.exceptions.ActivationConflictException;
 import com.deroyque.activation_service.models.ActivationRegistry;
 import com.deroyque.activation_service.models.repositories.ActivationRegistryRepository;
@@ -12,12 +10,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class ActivationRegistryBusiness {
+public class CreateActivationRegistryUseCase {
 
     private final ActivationRegistryRepository activationRegistryRepository;
 
     @Autowired
-    public ActivationRegistryBusiness(ActivationRegistryRepository activationRegistryRepository) {
+    public CreateActivationRegistryUseCase(ActivationRegistryRepository activationRegistryRepository) {
         this.activationRegistryRepository = activationRegistryRepository;
     }
 

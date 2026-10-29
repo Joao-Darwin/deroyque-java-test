@@ -1,4 +1,4 @@
-package com.deroyque.activation_service.controllers.dtos.response;
+package com.deroyque.activation_service.application.usecases.create;
 
 import com.deroyque.activation_service.models.enums.RegistryStatus;
 

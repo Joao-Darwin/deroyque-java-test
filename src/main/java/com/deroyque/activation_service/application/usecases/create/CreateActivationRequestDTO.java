@@ -1,4 +1,4 @@
-package com.deroyque.activation_service.controllers.dtos.request;
+package com.deroyque.activation_service.application.usecases.create;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
