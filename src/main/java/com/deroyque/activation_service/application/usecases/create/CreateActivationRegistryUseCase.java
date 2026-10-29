@@ -3,6 +3,8 @@ package com.deroyque.activation_service.application.usecases.create;
 import com.deroyque.activation_service.exception.exceptions.ActivationConflictException;
 import com.deroyque.activation_service.models.ActivationRegistry;
 import com.deroyque.activation_service.models.repositories.ActivationRegistryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 @Service
 public class CreateActivationRegistryUseCase {
 
+    private final Logger log = LoggerFactory.getLogger(CreateActivationRegistryUseCase.class.getName());
+
     private final ActivationRegistryRepository activationRegistryRepository;
 
     @Autowired
@@ -20,12 +24,15 @@ public class CreateActivationRegistryUseCase {
     }
 
     public CreateActivationResponseDTO create(CreateActivationRequestDTO request) {
+        log.info("iniciando solicitação de ativação do produto {} para cliente {}", request.productCode(), request.customerId());
+
         Optional<ActivationRegistry> activationRegistryOptional = activationRegistryRepository.findByExternalId(request.externalId());
 
         if (activationRegistryOptional.isPresent()) {
             ActivationRegistry activationRegistry = activationRegistryOptional.get();
 
             if (isSameRequest(activationRegistry, request)) {
+                log.info("solicitação já realizada, retornando solicitação");
                 return toResponse(activationRegistry);
             }
 
@@ -42,6 +49,7 @@ public class CreateActivationRegistryUseCase {
 
         ActivationRegistry savedRegistry = activationRegistryRepository.save(activationRegistry);
 
+        log.info("solicitação criada com sucesso ID {}", savedRegistry.getId());
         return toResponse(savedRegistry);
     }
 
