@@ -1,0 +1,35 @@
+activation:
+  worker:
+    fixed-delay: 5000
+
+spring:
+  application:
+    name: activation-service
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+resilience4j:
+  retry:
+    instances:
+      activationProvider:
+        maxAttempts: 3
+        waitDuration: 1s
+        retryExceptions:
+          - com.deroyque.activation_service.exception.exceptions.ProviderTemporaryException
+        ignoreExceptions:
+          - com.deroyque.activation_service.exception.exceptions.ProviderPermanentException
+
+prodiver:
+  base:
+    url: http://localhost:8081

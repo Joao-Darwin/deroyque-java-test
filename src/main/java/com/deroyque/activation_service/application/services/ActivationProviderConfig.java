@@ -10,7 +10,7 @@ public class ActivationProviderConfig {
 
     @Bean
     public RestClient activationProviderRestClient(
-            @Value("${PROVIDER_BASE_URL}") String baseUrl
+            @Value("${prodiver.base.url}") String baseUrl
     ) {
         return RestClient.builder()
                 .baseUrl(baseUrl)

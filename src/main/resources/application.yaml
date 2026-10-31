@@ -26,3 +26,6 @@ resilience4j:
           - com.deroyque.activation_service.exception.exceptions.ProviderTemporaryException
         ignoreExceptions:
           - com.deroyque.activation_service.exception.exceptions.ProviderPermanentException
+prodiver:
+  base:
+    url: ${PROVIDER_BASE_URL}

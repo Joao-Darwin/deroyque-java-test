@@ -19,7 +19,10 @@ public interface ActivationRegistryRepository extends JpaRepository<ActivationRe
 
     Optional<ActivationRegistry> findByExternalId(String externalId);
 
-    @Modifying
+    @Modifying(
+            clearAutomatically = true,
+            flushAutomatically = true
+    )
     @Query("""
         UPDATE ActivationRegistry a
         SET a.status = :processing,
