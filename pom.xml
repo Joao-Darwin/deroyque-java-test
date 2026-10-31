@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<flyway.version>11.8.1</flyway.version>
+		<resilience4j.version>2.3.0</resilience4j.version>
 	</properties>
 
 	<dependencies>
@@ -49,6 +50,11 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-database-postgresql</artifactId>
 			<version>${flyway.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-spring-boot3</artifactId>
+			<version>${resilience4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
