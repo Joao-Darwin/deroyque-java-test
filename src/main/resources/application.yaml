@@ -1,3 +1,6 @@
+activation:
+  worker:
+    fixed-delay: ${WORKER_DELAY}
 spring:
   application:
     name: activation-service

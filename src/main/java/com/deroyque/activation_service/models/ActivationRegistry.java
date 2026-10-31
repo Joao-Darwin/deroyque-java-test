@@ -33,6 +33,8 @@ import java.util.UUID;
 )
 public class ActivationRegistry {
 
+    private static final int MAX_ATTEMPTS = 3;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -51,6 +53,21 @@ public class ActivationRegistry {
     private RegistryStatus status = RegistryStatus.PENDING;
 
     @Column(nullable = false)
+    private int attempts;
+
+    @Column(name = "last_error")
+    private String lastError;
+
+    @Column(name = "next_attempt_at")
+    private LocalDateTime nextAttemptAt;
+
+    @Column(name = "last_attempt_at")
+    private LocalDateTime lastAttemptAt;
+
+    @Column(name = "processing_started_at")
+    private LocalDateTime processingStartedAt;
+
+    @Column(nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -62,6 +79,75 @@ public class ActivationRegistry {
     private Long version;
 
     public ActivationRegistry() {}
+
+    public ActivationRegistry(
+            String externalId,
+            String customerId,
+            String productCode
+    ) {
+        this.externalId = externalId;
+        this.customerId = customerId;
+        this.productCode = productCode;
+        this.attempts = 0;
+    }
+
+    public void startProcessing() {
+        validateStatus(RegistryStatus.PENDING);
+
+        if (attempts >= MAX_ATTEMPTS) {
+            throw new IllegalStateException(
+                    "Maximum number of attempts exceeded."
+            );
+        }
+
+        this.status = RegistryStatus.PROCESSING;
+        this.attempts++;
+        this.lastAttemptAt = LocalDateTime.now();
+        this.processingStartedAt = LocalDateTime.now();
+        this.nextAttemptAt = null;
+        this.lastError = null;
+    }
+
+    public void complete() {
+        validateStatus(RegistryStatus.PROCESSING);
+
+        this.status = RegistryStatus.COMPLETED;
+        this.processingStartedAt = null;
+        this.nextAttemptAt = null;
+        this.lastError = null;
+    }
+
+    public void failPermanently(String reason) {
+        validateStatus(RegistryStatus.PROCESSING);
+
+        this.status = RegistryStatus.FAILED;
+        this.lastError = reason;
+        this.processingStartedAt = null;
+        this.nextAttemptAt = null;
+    }
+
+    public void scheduleRetry(String reason, LocalDateTime nextAttemptAt) {
+        validateStatus(RegistryStatus.PROCESSING);
+
+        if (attempts >= MAX_ATTEMPTS) {
+            failPermanently(reason);
+            return;
+        }
+
+        this.status = RegistryStatus.PENDING;
+        this.lastError = reason;
+        this.nextAttemptAt = nextAttemptAt;
+        this.processingStartedAt = null;
+    }
+
+    private void validateStatus(RegistryStatus expectedStatus) {
+        if (this.status != expectedStatus) {
+            throw new IllegalStateException(
+                    "Invalid transition from " + this.status +
+                            ". Expected status: " + expectedStatus
+            );
+        }
+    }
 
     public UUID getId() {
         return id;
@@ -101,5 +187,9 @@ public class ActivationRegistry {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public int getAttempts() {
+        return attempts;
     }
 }
