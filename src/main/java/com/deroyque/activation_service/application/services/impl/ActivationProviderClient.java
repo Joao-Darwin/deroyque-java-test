@@ -4,10 +4,8 @@ import com.deroyque.activation_service.application.services.IActivationProviderC
 import com.deroyque.activation_service.exception.exceptions.ProviderPermanentException;
 import com.deroyque.activation_service.exception.exceptions.ProviderTemporaryException;
 import com.deroyque.activation_service.models.ActivationRegistry;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 @Component
@@ -20,6 +18,7 @@ public class ActivationProviderClient implements IActivationProviderClient {
     }
 
     @Override
+    @Retry(name = "activationProvider")
     public void activate(ActivationRegistry activation) {
         try {
             restClient.post()
@@ -27,15 +26,12 @@ public class ActivationProviderClient implements IActivationProviderClient {
                     .retrieve()
                     .toBodilessEntity();
 
-        } catch (HttpClientErrorException exception) {
-            throw new ProviderPermanentException(
-                    "Provider rejected activation: HTTP " +
-                            exception.getStatusCode().value()
-            );
+        } catch (ProviderPermanentException | ProviderTemporaryException exception) {
+            throw exception;
 
-        } catch (HttpServerErrorException | ResourceAccessException exception) {
+        } catch (Exception exception) {
             throw new ProviderTemporaryException(
-                    "Provider temporarily unavailable."
+                    "Error communicating with activation provider."
             );
         }
     }
