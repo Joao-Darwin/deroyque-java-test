@@ -192,4 +192,32 @@ public class ActivationRegistry {
     public int getAttempts() {
         return attempts;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getLastError() {
+        return lastError;
+    }
+
+    public LocalDateTime getNextAttemptAt() {
+        return nextAttemptAt;
+    }
+
+    public LocalDateTime getLastAttemptAt() {
+        return lastAttemptAt;
+    }
+
+    public LocalDateTime getProcessingStartedAt() {
+        return processingStartedAt;
+    }
 }
